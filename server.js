@@ -31,6 +31,22 @@ const server = http.createServer(app)
 // See: http://expressjs.com/en/4x/api.html#app.settings.table
 const PRODUCTION = app.get('env') === 'production';
 
+app.use(express.json)
+
+app.post('/collect-bottles', (req, res) => {
+  const fs = require('node:fs/promises');
+  async function example() {
+  try {
+    const [character, x, y] = [req.body.character, req.body.coordinates.x, req.body.coordinates.y];
+    const content = "char: " + character + " " + "x: " + x + "y: " + y + "\n "
+    await fs.appendFile('/incoming/grid.txt', content);
+  } catch (err) {
+    console.log(err);
+  }
+  res.sendStatus(201)
+}
+example();
+})
 // Administrative routes are not timed or logged, but for non-admin routes, pino
 // overhead is included in timing.
 app.get('/ready', (req, res) => res.status(200).json({status:"ok"}));
